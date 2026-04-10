@@ -1,0 +1,49 @@
+
+#include<iostream>
+#include<cmath>
+using namespace std;
+int main()
+{
+   int n,i,j,min,d,p,q;
+   p=0;
+   q=1;
+
+ //  int x[n],y[n];
+   cout << "Enter the size of array" << endl;
+    cin >> n;
+    int x[n],y[n];
+   for(i=0;i<n;i++)
+   {
+      cout << "The index of array x is" << i << "\n";
+      cin >> x[i];
+      cout << "The index of array y is" << i << "\n";
+      cin>>y[i];
+   }
+   min=sqrt((x[0]-x[1])*(x[0]-x[1])+(y[0]-y[1])*(y[0]-y[1]));
+   for(i=0;i<n-1;i++)
+   {
+      for(j=i+1;j<n;j++)
+      {
+         d=sqrt((x[i]-x[j])*(x[i]-x[j])+(y[i]-y[j])*(y[i]-y[j]));
+         cout<<"The distance between points"<<x[i]<<","<<y[i];
+         cout<<" & "<<x[j]<<","<<y[j]<<"\n";
+         cout<<d<<endl;
+         if(d<min)
+         {
+            min=d;
+            //cout<<"The 1st x&y coordinated are"<<x[i]<<","<<y[i]<<endl;
+            //cout<<"The 2nd x&y coordinated are"<<x[j]<<","<<y[j]<<endl;
+            p=i;
+            q=j;
+         }
+      }
+   }
+   //if(min=d)
+   //{
+    //  cout<<"The 1st x&y coordinated are"<<x[p]<<","<<y[p]<<endl;
+    //  cout<<"The 2nd x&y coordinated are"<<x[q]<<","<< y[q]<<endl;
+   //}
+   cout<<"The minimum distance between points"<<x[p]<<","<<y[p];
+   cout<<" & "<<x[q]<<","<<y[q]<<"\n";
+   cout << "Minimum distancs" << min << "\n";
+}
