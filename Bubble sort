@@ -1,0 +1,48 @@
+#include<iostream>
+using namespace std;
+int* bubble_sort(int *arr,int n)
+{
+   for(int i=0;i<n-1;i++)
+   {
+      bool flag=false;
+      for(int j=0;j<n-1-i;j++)
+      {
+         if(arr[j]>arr[j+1])
+         {
+            int temp=arr[j];
+            arr[j]=arr[j+1];
+            arr[j+1]=temp;
+            flag=true;
+         }
+      }
+         if (!flag)
+            break;
+   }
+   return arr;
+}
+void print_Array(int *arr,int n)
+{
+   cout<<"The elements are"<<endl;
+   for(int i=0;i<n;i++)
+   {
+      cout<<arr[i]<<"\t";
+   }
+   cout<<endl;
+}
+int main()
+{
+   int num;
+   cout<<"Enter the no of elements"<<endl;
+   cin>>num;
+   int *arr;
+   arr=new int[num];
+   cout<<"Enter the array elements"<<endl;
+   for(int i=0;i<num;i++)
+   {
+      cin>>arr[i];
+   }
+   cout<<"Original array "<<endl;
+   print_Array(arr,num);
+   cout<<"sorted array"<<endl;
+   print_Array(bubble_sort(arr,num),num);
+}
