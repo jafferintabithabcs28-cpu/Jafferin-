@@ -1,0 +1,8 @@
+ lsword.txt
+Python is powerful and easy
+--------------------------
+with open("lsword.txt","r")as f:
+   text=f.read()
+words = text.split()
+print("Longest:", max(words, key=len))
+print("Shortest:", min(words, key=len))
