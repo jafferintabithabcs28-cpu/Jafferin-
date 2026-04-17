@@ -1,0 +1,12 @@
+dup.txt
+apple
+banana
+apple
+orange
+banana
+  lines_seen = set()
+with open("dup.txt", "r") as file:
+    for line in file:
+        if line not in lines_seen:
+            print(line.strip())
+            lines_seen.add(line)
