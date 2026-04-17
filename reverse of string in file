@@ -1,0 +1,7 @@
+rev.txt
+Hello
+World
+-----------------------------
+with open("rev.txt", "r") as file:
+    for line in file:
+        print(line.strip()[::-1])
