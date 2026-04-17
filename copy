@@ -1,0 +1,14 @@
+src.txt
+Hello
+
+World
+
+AI
+with open("src.txt", "r") as src, open("dst.txt", "w") as dst:
+    for line in src:
+        if line.strip():
+            dst.write(line)
+   dst.txt
+Hello
+World
+AI
