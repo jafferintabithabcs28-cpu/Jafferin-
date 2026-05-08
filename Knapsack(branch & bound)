@@ -1,0 +1,167 @@
+#include <iostream>
+using namespace std;
+struct Item
+{
+    int id;
+    int weight;
+    int value;
+    double ratio;
+};
+
+struct Node
+{
+    int level;
+    int profit;
+    int weight;
+    double bound;
+    bool* selected;
+    Node* next;
+};
+
+struct ManualQueue
+{
+    Node *front, *rear;
+    ManualQueue() { front = rear = NULL; }
+
+    void push(Node data, int n)
+    {
+        Node* temp = new Node;
+        *temp = data;
+        temp->selected = new bool[n];
+        for (int i = 0; i < n; i++) temp->selected[i] = data.selected[i];
+
+        temp->next = NULL;
+        if (rear == NULL)
+        {
+            front = rear = temp;
+            return;
+        }
+        rear->next = temp;
+        rear = temp;
+    }
+
+    Node pop()
+    {
+        Node* temp = front;
+        Node data = *temp;
+        front = front->next;
+        if (front == NULL) rear = NULL;
+        delete temp;
+        return data;
+    }
+
+    bool isEmpty() { return front == NULL; }
+};
+
+void sortItems(Item items[], int n)
+{
+    for (int i = 0; i < n - 1; i++)
+    {
+        for (int j = 0; j < n - i - 1; j++)
+        {
+            if (items[j].ratio < items[j + 1].ratio)
+            {
+                Item temp = items[j];
+                items[j] = items[j + 1];
+                items[j + 1] = temp;
+            }
+        }
+    }
+}
+
+double calculateBound(int level, int profit, int weight, int n, int W, Item items[])
+{
+    if (weight >= W) return 0;
+    double bound = profit;
+    int j = level + 1;
+    int totalWeight = weight;
+    while (j < n && totalWeight + items[j].weight <= W)
+    {
+        totalWeight += items[j].weight;
+        bound += items[j].value;
+        j++;
+    }
+    if (j < n) bound += (double)(W - totalWeight) * items[j].ratio;
+    return bound;
+}
+
+void solve()
+{
+    int n, W;
+    cout << "Enter no.of item: "; cin >> n;
+    cout << "Enter capacity: "; cin >> W;
+
+    Item* items = new Item[n];
+    for (int i = 0; i < n; i++) {
+        items[i].id = i + 1;
+        cout << "Item " << i + 1 << " (Value Weight): ";
+        cin >> items[i].value >> items[i].weight;
+        items[i].ratio = (double)items[i].value / items[i].weight;
+    }
+
+    sortItems(items, n);
+
+    ManualQueue q;
+    bool* bestItems = new bool[n];
+    for(int i=0; i<n; i++) bestItems[i] = false;
+
+    Node u, v;
+    u.selected = new bool[n];
+    for(int i=0; i<n; i++) u.selected[i] = false;
+
+    u.level = -1; u.profit = 0; u.weight = 0;
+    u.bound = calculateBound(-1, 0, 0, n, W, items);
+
+    q.push(u, n);
+    int maxProfit = 0;
+
+    while (!q.isEmpty())
+    {
+        u = q.pop();
+        if (u.level == n - 1)
+        {
+            delete[] u.selected;
+            continue;
+        }
+
+        v.level = u.level + 1;
+        v.selected = new bool[n];
+        for(int i=0; i<n; i++) v.selected[i] = u.selected[i];
+
+        v.weight = u.weight + items[v.level].weight;
+        v.profit = u.profit + items[v.level].value;
+        v.selected[v.level] = true;
+
+        if (v.weight <= W && v.profit > maxProfit)
+        {
+            maxProfit = v.profit;
+            for(int i=0; i<n; i++) bestItems[i] = v.selected[i];
+        }
+        v.bound = calculateBound(v.level, v.profit, v.weight, n, W, items);
+        if (v.bound > maxProfit) q.push(v, n);
+
+        v.weight = u.weight;
+        v.profit = u.profit;
+        v.selected[v.level] = false;
+        v.bound = calculateBound(v.level, v.profit, v.weight, n, W, items);
+        if (v.bound > maxProfit) q.push(v, n);
+
+        delete[] u.selected;
+        delete[] v.selected;
+    }
+
+    cout << "\nMax Profit: " << maxProfit << endl;
+    cout << "Items selected: ";
+    for (int i = 0; i < n; i++) {
+        if (bestItems[i]) cout << items[i].id << " ";
+    }
+    cout << endl;
+
+    delete[] items;
+    delete[] bestItems;
+}
+
+int main() {
+    solve();
+    return 0;
+}
