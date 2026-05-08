@@ -1,0 +1,95 @@
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+struct Node {
+    char data;
+    double freq;
+    Node *left, *right;
+    Node(char d, double f) : data(d), freq(f), left(NULL), right(NULL) {}
+};
+
+struct MinHeap {
+    int size;
+    Node** array;
+    MinHeap(int cap) : size(0) { array = new Node*[cap]; }
+
+    void insert(Node* node) {
+        int i = size++;
+        while (i && node->freq < array[(i - 1) / 2]->freq) {
+            array[i] = array[(i - 1) / 2];
+            i = (i - 1) / 2;
+        }
+        array[i] = node;
+    }
+
+    Node* extractMin() {
+        Node* res = array[0];
+        array[0] = array[--size];
+        int i = 0;
+        while (2 * i + 1 < size) {
+            int left = 2 * i + 1, right = 2 * i + 2, smallest = left;
+            if (right < size && array[right]->freq < array[left]->freq) smallest = right;
+            if (array[i]->freq <= array[smallest]->freq) break;
+            swap(array[i], array[smallest]);
+            i = smallest;
+        }
+        return res;
+    }
+};
+
+string codeTable[256];
+
+void storeCodes(Node* root, string code) {
+    if (!root) return;
+    if (!root->left && !root->right) {
+        codeTable[(unsigned char)root->data] = code;
+        cout << root->data << " : " << code << endl;
+    }
+    storeCodes(root->left, code + "0");
+    storeCodes(root->right, code + "1");
+}
+
+int main() {
+    int n;
+    cout << "Enter number of characters: ";
+    cin >> n;
+
+    char* data = new char[n];
+    double* freq = new double[n];
+
+    cout << "Enter " << n << " characters and their frequencies:\n";
+    for (int i = 0; i < n; i++) {
+        cin >> data[i] >> freq[i];
+    }
+
+    MinHeap heap(n);
+    for (int i = 0; i < n; i++) heap.insert(new Node(data[i], freq[i]));
+
+    while (heap.size > 1) {
+        Node *l = heap.extractMin();
+        Node *r = heap.extractMin();
+        Node *top = new Node('$', l->freq + r->freq);
+        top->left = l; top->right = r;
+        heap.insert(top);
+    }
+
+    cout << "\nHuffman Codes:" << endl;
+    storeCodes(heap.extractMin(), "");
+
+    string target;
+    cout << "\nEnter string to encode: ";
+    cin >> target;
+
+    string encoded = "";
+    for (int i = 0; i < target.length(); i++) {
+        encoded += codeTable[(unsigned char)target[i]];
+    }
+
+    cout << "string " << target << " : " << encoded << endl;
+
+    delete[] data;
+    delete[] freq;
+    return 0;
+}
